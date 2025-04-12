@@ -1,41 +1,38 @@
-// Configuration - Replace these with your own values
+// Configuration
 const config = {
-    webhookUrl: "YOUR_DISCORD_WEBHOOK_URL", // Replace with your Discord webhook URL
-    botUserId: "BOT_USER_ID", // Replace with the bot/user ID you want to listen for
-    checkInterval: 2000, // How often to check for new messages (in ms)
-    maxWaitTime: 30000 // Maximum time to wait for a response (in ms)
+    webhookUrl: "YOUR_DISCORD_WEBHOOK_URL",
+    botUserId: "BOT_USER_ID",
+    checkInterval: 2000,
+    maxWaitTime: 30000
 };
 
-// DOM elements
+// DOM Elements
 const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
-const sendButton = document.getElementById('send-button');
-const typingIndicator = document.getElementById('typing-indicator');
-
-// Store the last message timestamp to avoid duplicates
+const sendButton = document.getElementById('send-btn');
+const typingIndicator = document.getElementById('typing');
 let lastMessageTimestamp = 0;
 
-// Function to add a message to the chat
+// Initial greeting
+window.onload = function() {
+    addMessage("Mr.Error", "Hello! I'm Mr.Error. How can I help you today?", false);
+};
+
+// Add message to chat
 function addMessage(sender, text, isUser = false) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+    messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
     
-    const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = `message-bubble ${isUser ? 'user-bubble' : 'bot-bubble'}`;
-    bubbleDiv.textContent = text;
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
     
-    const senderSpan = document.createElement('span');
-    senderSpan.className = 'message-sender';
-    senderSpan.textContent = sender;
-    
-    messageDiv.appendChild(bubbleDiv);
-    messageDiv.appendChild(senderSpan);
-    
+    messageDiv.appendChild(bubble);
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Function to send message to Discord
+// Send message to Discord
 async function sendToDiscord(message) {
     try {
         const response = await fetch(config.webhookUrl, {
@@ -48,59 +45,43 @@ async function sendToDiscord(message) {
             }),
         });
         
-        if (!response.ok) {
-            throw new Error('Failed to send message to Discord');
-        }
-        
+        if (!response.ok) throw new Error('Failed to send message');
         return await response.json();
     } catch (error) {
-        console.error('Error sending message to Discord:', error);
+        console.error('Error:', error);
         addMessage("System", "Failed to send message. Please try again later.", false);
         return null;
     }
 }
 
-// Function to check for responses from the specific bot/user
+// Check for responses (simulated)
 async function checkForResponse() {
-    try {
-        // In a real implementation, you would need a server endpoint to fetch messages
-        // This is a placeholder for the concept
-        console.log("Checking for responses...");
-        
-        // Simulating a response for demonstration
-        // In a real app, you would:
-        // 1. Query your server which monitors the Discord channel
-        // 2. Check if there are new messages from the botUserId
-        // 3. Return the message content if found
-        
-        return null;
-        
-    } catch (error) {
-        console.error('Error checking for responses:', error);
-        return null;
-    }
+    // In a real implementation, this would check your backend/Discord
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve({
+                content: "This is a simulated response. In a real app, this would come from your Discord bot.",
+                timestamp: Date.now()
+            });
+        }, 1500);
+    });
 }
 
-// Function to handle user sending a message
+// Handle message sending
 async function handleUserMessage() {
     const message = userInput.value.trim();
     if (!message) return;
     
-    // Add user message to chat
     addMessage("You", message, true);
     userInput.value = '';
     
-    // Show typing indicator
     typingIndicator.style.display = 'block';
-    
-    // Send message to Discord
     const discordResponse = await sendToDiscord(message);
     if (!discordResponse) {
         typingIndicator.style.display = 'none';
         return;
     }
     
-    // Start checking for responses
     const startTime = Date.now();
     let responseReceived = false;
     
@@ -124,41 +105,23 @@ async function handleUserMessage() {
         }
     }, config.checkInterval);
 }
-// Enhanced button click effect
+
+// Ripple effect for send button
 sendButton.addEventListener('click', function(e) {
-    // Create ripple element
     const ripple = document.createElement('span');
     ripple.classList.add('ripple-effect');
-    
-    // Position the ripple
     const rect = this.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
-    const x = e.clientX - rect.left - size/2;
-    const y = e.clientY - rect.top - size/2;
-    
-    // Style the ripple
     ripple.style.width = ripple.style.height = `${size}px`;
-    ripple.style.left = `${x}px`;
-    ripple.style.top = `${y}px`;
-    
-    // Add to button
+    ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+    ripple.style.top = `${e.clientY - rect.top - size/2}px`;
     this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
     
-    // Remove after animation
-    setTimeout(() => {
-        ripple.remove();
-    }, 600);
-    
-    // Handle the message sending
     handleUserMessage();
 });
-// Event listeners
-sendButton.addEventListener('click', handleUserMessage);
-userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        handleUserMessage();
-    }
-});
 
-// Initial greeting
-// addMessage("Mr.Error", "Hello! I'm Mr.Error. How can I help you today?", false);
+// Send on Enter key
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleUserMessage();
+});
