@@ -7,6 +7,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
     body {
+        /* Credit Badge Styles */
+.credit-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(30, 136, 229, 0.9);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.credit-badge:hover {
+  background: #1e88e5;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.credit-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.credit-text {
+  font-weight: 500;
+}
         font-family: 'Roboto', sans-serif;
         background-color: #1a1a1a;
         color: #e0e0e0;
