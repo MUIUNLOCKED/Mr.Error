@@ -1,7 +1,7 @@
 // Configuration
 const config = {
-    webhookUrl: "YOUR_DISCORD_WEBHOOK_URL",
-    botUserId: "BOT_USER_ID",
+    webhookUrl: "https://discord.com/api/webhooks/1360728566668464138/hbugJre-UbJtN1F0LPibsnNubTRA19IExHa1yovOECZQgCBlpm16SxyYhBhScu6aw8xy",
+    botUserId: "1360728831274778774",
     checkInterval: 2000,
     maxWaitTime: 30000
 };
