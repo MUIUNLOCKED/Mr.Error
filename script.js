@@ -2,7 +2,7 @@
 const config = {
     botUserId: "1360728831274778774",  // The bot's user ID that will respond
     channelId: "1360728529112928366",  // Channel ID where messages should be sent
-    userToken: "NjU1NDA5MDI0NTczMTEyMzIx.GHPa3v.LGH-RpNafAmOW1wLbZ3vgupzEI4gOjLoxkn-rc",  // Your Discord account token
+    userToken: "MTM2MDc0MDUxOTg5NDA2MTEwNw.G_kCz5.kF0dPQ9w2uWe7R6JURD-Q6XU-6TcpsURrRxNWY",  // Your Discord account token
     checkInterval: 2000,
     maxWaitTime: 30000
 };
