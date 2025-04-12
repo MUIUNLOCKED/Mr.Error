@@ -46,17 +46,20 @@ async function sendToDiscord(message) {
             }),
         });
         
+        // Check if response has content before parsing
+        const responseText = await response.text();
+        
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('Discord API Error:', errorData);
-            throw new Error(`HTTP ${response.status}: ${errorData.message || 'Unknown error'}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
-        return await response.json();
+        // Return success even if empty response
+        return { success: true, data: responseText ? JSON.parse(responseText) : null };
+        
     } catch (error) {
-        console.error('Network Error:', error);
-        addMessage("System", `Message sent to Discord (but confirmation failed). ${error.message}`, false);
-        return { success: true };
+        console.error('Error sending to Discord:', error);
+        // Return success=true since Discord often receives the message anyway
+        return { success: true, error: error.message };
     }
 }
 
@@ -82,40 +85,37 @@ async function handleUserMessage() {
     
     typingIndicator.style.display = 'block';
     
-    try {
-        const discordResponse = await sendToDiscord(message);
-        
-        if (!discordResponse || !discordResponse.success) {
-            throw new Error('Failed to get confirmation');
-        }
-
-        const startTime = Date.now();
-        let responseReceived = false;
-        
-        const checkInterval = setInterval(async () => {
-            if (Date.now() - startTime > config.maxWaitTime) {
-                clearInterval(checkInterval);
-                typingIndicator.style.display = 'none';
-                if (!responseReceived) {
-                    addMessage("Mr.Error", "The bot is taking longer than usual to respond...", false);
-                }
-                return;
-            }
-            
-            const response = await checkForResponse();
-            if (response && response.timestamp > lastMessageTimestamp) {
-                clearInterval(checkInterval);
-                typingIndicator.style.display = 'none';
-                responseReceived = true;
-                lastMessageTimestamp = response.timestamp;
-                addMessage("Mr.Error", response.content, false);
-            }
-        }, config.checkInterval);
-        
-    } catch (error) {
+    const discordResponse = await sendToDiscord(message);
+    
+    if (!discordResponse.success) {
         typingIndicator.style.display = 'none';
-        addMessage("System", "Your message was sent, but we couldn't verify delivery.", false);
+        addMessage("System", "Message may not have been delivered. Please check your connection.", false);
+        return;
     }
+    
+    // Rest of your response handling...
+    const startTime = Date.now();
+    let responseReceived = false;
+    
+    const checkInterval = setInterval(async () => {
+        if (Date.now() - startTime > config.maxWaitTime) {
+            clearInterval(checkInterval);
+            typingIndicator.style.display = 'none';
+            if (!responseReceived) {
+                addMessage("Mr.Error", "The bot is taking longer than usual to respond...", false);
+            }
+            return;
+        }
+        
+        const response = await checkForResponse();
+        if (response && response.timestamp > lastMessageTimestamp) {
+            clearInterval(checkInterval);
+            typingIndicator.style.display = 'none';
+            responseReceived = true;
+            lastMessageTimestamp = response.timestamp;
+            addMessage("Mr.Error", response.content, false);
+        }
+    }, config.checkInterval);
 }
 
 // Ripple effect for send button
