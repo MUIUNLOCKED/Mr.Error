@@ -469,6 +469,257 @@
     ::-webkit-scrollbar-thumb:hover {
         background: #1976d2;
     }
+    /* Modern Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500&display=swap');
+
+:root {
+  --primary: #4361ee;
+  --primary-light: #4895ef;
+  --dark: #0e0e10;
+  --gray: #1a1a1d;
+  --light: #f8f9fa;
+  --accent: #f72585;
+}
+
+/* Modern Chat Container */
+.modern-chat {
+  width: 100%;
+  max-width: 420px;
+  height: 80vh;
+  max-height: 700px;
+  background: var(--dark);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.chat-header {
+  padding: 18px 20px;
+  background: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo-pulse {
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.6; transform: scale(0.9); }
+}
+
+.chat-header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--light);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+/* Messages */
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #0e0e10 0%, #1a1a1d 100%);
+}
+
+.message {
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  line-height: 1.4;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.bot .bubble {
+  background: var(--gray);
+  color: var(--light);
+  border-bottom-left-radius: 4px;
+}
+
+.user .bubble {
+  background: var(--primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+  margin-left: auto;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  padding: 0 20px 10px;
+  display: none;
+}
+
+.dot-flashing {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: 0.3s;
+}
+
+.dot-flashing::before, 
+.dot-flashing::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-light);
+}
+
+.dot-flashing::before {
+  left: -12px;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 12px;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: 0.6s;
+}
+
+@keyframes dotFlashing {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  50%, 100% { opacity: 1; transform: scale(1); }
+}
+
+/* Input Area */
+.input-area {
+  padding: 15px;
+  background: var(--gray);
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.input-area input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 12px;
+  color: var(--light);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.input-area input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.input-area button {
+  width: 48px;
+  height: 48px;
+  background: var(--primary);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-area button:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.input-area button:active {
+  transform: translateY(0);
+}
+
+/* Modern Badge */
+.modern-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 8px 14px;
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--light);
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+}
+
+.modern-badge:hover {
+  background: rgba(60, 60, 60, 0.8);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ig-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--primary-light);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
 </style>
 </head>
 <body>
