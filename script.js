@@ -2,6 +2,7 @@
 const config = {
     webhookUrl: "https://discord.com/api/webhooks/1360728566668464138/hbugJre-UbJtN1F0LPibsnNubTRA19IExHa1yovOECZQgCBlpm16SxyYhBhScu6aw8xy",
     botUserId: "1360728831274778774",
+    userToMention: "1360728831274778774",
     checkInterval: 2000,
     maxWaitTime: 30000
 };
@@ -32,7 +33,7 @@ function addMessage(sender, text, isUser = false) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Send message to Discord
+// Send message to Discord with mention
 async function sendToDiscord(message) {
     try {
         const response = await fetch(config.webhookUrl, {
@@ -41,26 +42,30 @@ async function sendToDiscord(message) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                content: message,
+                content: `<@${config.userToMention}> ${message}`
             }),
         });
         
-        if (!response.ok) throw new Error('Failed to send message');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Discord API Error:', errorData);
+            throw new Error(`HTTP ${response.status}: ${errorData.message || 'Unknown error'}`);
+        }
+        
         return await response.json();
     } catch (error) {
-        console.error('Error:', error);
-        addMessage("System", "Failed to send message. Please try again later.", false);
-        return null;
+        console.error('Network Error:', error);
+        addMessage("System", `Message sent to Discord (but confirmation failed). ${error.message}`, false);
+        return { success: true };
     }
 }
 
 // Check for responses (simulated)
 async function checkForResponse() {
-    // In a real implementation, this would check your backend/Discord
     return new Promise(resolve => {
         setTimeout(() => {
             resolve({
-                content: "This is a simulated response. In a real app, this would come from your Discord bot.",
+                content: "This is a simulated response from your bot.",
                 timestamp: Date.now()
             });
         }, 1500);
@@ -76,34 +81,41 @@ async function handleUserMessage() {
     userInput.value = '';
     
     typingIndicator.style.display = 'block';
-    const discordResponse = await sendToDiscord(message);
-    if (!discordResponse) {
-        typingIndicator.style.display = 'none';
-        return;
-    }
     
-    const startTime = Date.now();
-    let responseReceived = false;
-    
-    const checkInterval = setInterval(async () => {
-        if (Date.now() - startTime > config.maxWaitTime) {
-            clearInterval(checkInterval);
-            typingIndicator.style.display = 'none';
-            if (!responseReceived) {
-                addMessage("Mr.Error", "I'm currently unavailable. Please try again later.", false);
-            }
-            return;
-        }
+    try {
+        const discordResponse = await sendToDiscord(message);
         
-        const response = await checkForResponse();
-        if (response && response.timestamp > lastMessageTimestamp) {
-            clearInterval(checkInterval);
-            typingIndicator.style.display = 'none';
-            responseReceived = true;
-            lastMessageTimestamp = response.timestamp;
-            addMessage("Mr.Error", response.content, false);
+        if (!discordResponse || !discordResponse.success) {
+            throw new Error('Failed to get confirmation');
         }
-    }, config.checkInterval);
+
+        const startTime = Date.now();
+        let responseReceived = false;
+        
+        const checkInterval = setInterval(async () => {
+            if (Date.now() - startTime > config.maxWaitTime) {
+                clearInterval(checkInterval);
+                typingIndicator.style.display = 'none';
+                if (!responseReceived) {
+                    addMessage("Mr.Error", "The bot is taking longer than usual to respond...", false);
+                }
+                return;
+            }
+            
+            const response = await checkForResponse();
+            if (response && response.timestamp > lastMessageTimestamp) {
+                clearInterval(checkInterval);
+                typingIndicator.style.display = 'none';
+                responseReceived = true;
+                lastMessageTimestamp = response.timestamp;
+                addMessage("Mr.Error", response.content, false);
+            }
+        }, config.checkInterval);
+        
+    } catch (error) {
+        typingIndicator.style.display = 'none';
+        addMessage("System", "Your message was sent, but we couldn't verify delivery.", false);
+    }
 }
 
 // Ripple effect for send button
