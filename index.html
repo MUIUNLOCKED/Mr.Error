@@ -3,702 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr.Error Chatbot</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #1a1a1a;
-        color: #e0e0e0;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-    .ripple-effect {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
-}
+    <title>Mr.Error - Modern Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --dark: #0e0e10;
+            --gray: #1a1a1d;
+            --light: #f8f9fa;
+            --accent: #f72585;
+        }
 
-@keyframes ripple {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
-}
-    .chat-container {
-        width: 90%;
-        max-width: 800px;
-        height: 80vh;
-        background-color: #2d2d2d;
-        border-radius: 10px;
-        box-shadow: 
-            0 6px 10px rgba(0, 0, 0, 0.2),
-            0 10px 30px rgba(0, 0, 0, 0.4);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        transform: translateY(0);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    /* Modern Credit Badge */
-.credit-badge {
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  background: rgba(30, 136, 229, 0.15);
-  color: #aaa;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: none;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121214;
+            color: var(--light);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-.credit-badge:hover {
-  background: rgba(30, 136, 229, 0.3);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.2);
-}
+        .modern-chat {
+            width: 100%;
+            max-width: 420px;
+            height: 80vh;
+            max-height: 700px;
+            background: var(--dark);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
 
-.credit-badge::before {
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23aaaaaa"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02z"/></svg>') no-repeat center;
-  transition: all 0.3s ease;
-}
+        .chat-header {
+            padding: 18px 20px;
+            background: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-.credit-badge:hover::before {
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02z"/></svg>') no-repeat center;
-}
-    
-    .chat-container:hover {
-        box-shadow: 
-            0 8px 15px rgba(0, 0, 0, 0.3),
-            0 15px 40px rgba(0, 0, 0, 0.5);
-        transform: translateY(-5px);
-    }
-/* ===== Cyberpunk Badge with Shine Effect ===== */
-.cyber-badge {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 8px 15px 8px 10px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  font-weight: bold;
-  color: #0ff;
-  background: rgba(0, 0, 20, 0.7);
-  border: 1px solid #0ff;
-  border-radius: 0;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  overflow: hidden; /* Required for shine effect */
-}
+        .logo-pulse {
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
 
-.ig-logo {
-  width: 16px;
-  height: 16px;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230ff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>');
-  filter: drop-shadow(0 0 2px #0ff);
-  position: relative;
-  z-index: 1;
-}
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.6; transform: scale(0.9); }
+        }
 
-.cyber-text {
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
-  z-index: 1;
-}
+        .chat-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--light);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
 
-/* Shine Effect */
-.cyber-badge::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -60%;
-  width: 40%;
-  height: 200%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: rotate(30deg);
-  opacity: 0;
-  transition: all 0.7s ease;
-}
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-left: auto;
+        }
 
-.cyber-badge:hover::after {
-  left: 120%;
-  opacity: 1;
-  transition-duration: 0.7s;
-}
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #0e0e10 0%, #1a1a1d 100%);
+        }
 
-/* Enhanced Hover Effects */
-.cyber-badge:hover {
-  background: rgba(0, 0, 30, 0.9);
-  box-shadow: 
-    0 0 20px rgba(0, 255, 255, 0.8),
-    0 0 30px rgba(0, 255, 255, 0.3);
-}
+        .message {
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease-out;
+        }
 
-.cyber-badge:hover .ig-logo {
-  animation: cyber-pulse 1s infinite;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-@keyframes cyber-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
+        .bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            font-size: 0.95rem;
+        }
 
-.cyber-badge:hover {
-  background: rgba(0, 0, 30, 0.9);
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-}
+        .bot .bubble {
+            background: var(--gray);
+            color: var(--light);
+            border-bottom-left-radius: 4px;
+        }
 
-.cyber-badge:hover .cyber-line {
-  transform: scaleX(1);
-  animation: cyber-glow 1.5s infinite;
-}
+        .user .bubble {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+            margin-left: auto;
+        }
 
-@keyframes cyber-glow {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
-}
-    
-    .chat-header {
-        background-color: #1e88e5;
-        color: white;
-        padding: 15px 20px;
-        font-size: 1.5rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-    
-    .chat-header img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 15px;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        transition: transform 0.3s ease;
-    }
-    
-    .chat-header img:hover {
-        transform: rotate(15deg);
-    }
-    
-    .chat-messages {
-        flex: 1;
-        padding: 20px;
-        overflow-y: auto;
-        background: linear-gradient(to bottom, #2d2d2d, #252525);
-    }
-    
-    .message {
-        margin-bottom: 15px;
-        display: flex;
-        flex-direction: column;
-        opacity: 0;
-        transform: translateY(10px);
-        animation: fadeInUp 0.3s ease forwards;
-    }
-    
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
+        .typing-indicator {
+            padding: 0 20px 10px;
+            display: none;
+        }
+
+        .dot-flashing {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            animation: dotFlashing 1s infinite linear alternate;
+            animation-delay: 0.3s;
+        }
+
+        .dot-flashing::before,
+        .dot-flashing::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-light);
+        }
+
+        .dot-flashing::before {
+            left: -12px;
+            animation: dotFlashing 1s infinite linear alternate;
+            animation-delay: 0s;
+        }
+
+        .dot-flashing::after {
+            left: 12px;
+            animation: dotFlashing 1s infinite linear alternate;
+            animation-delay: 0.6s;
+        }
+
+        @keyframes dotFlashing {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .input-area {
+            padding: 15px;
+            background: var(--gray);
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 12px;
+            color: var(--light);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-area input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .input-area button {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .input-area button:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .input-area button:active {
             transform: translateY(0);
         }
-    }
-    
-    .user-message {
-        align-items: flex-end;
-    }
-    
-    .bot-message {
-        align-items: flex-start;
-    }
-    
-    .message-bubble {
-        max-width: 70%;
-        padding: 10px 15px;
-        border-radius: 18px;
-        margin-bottom: 5px;
-        word-wrap: break-word;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .message-bubble:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .user-bubble {
-        background-color: #1e88e5;
-        color: white;
-        border-bottom-right-radius: 5px;
-        box-shadow: 0 3px 6px rgba(30, 136, 229, 0.3);
-    }
-    
-    .bot-bubble {
-        background-color: #3d3d3d;
-        color: #e0e0e0;
-        border-bottom-left-radius: 5px;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    }
-    
-    .message-sender {
-        font-size: 0.8rem;
-        color: #aaaaaa;
-        margin: 0 5px;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-    
-    .chat-input {
-        display: flex;
-        padding: 15px;
-        background-color: #3d3d3d;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .chat-input input {
-        flex: 1;
-        padding: 12px 15px;
-        border: none;
-        border-radius: 25px;
-        background-color: #4d4d4d;
-        color: #e0e0e0;
-        font-size: 1rem;
-        outline: none;
-        box-shadow: 
-            inset 0 1px 3px rgba(0, 0, 0, 0.2),
-            0 1px 1px rgba(255, 255, 255, 0.05);
-        transition: all 0.3s ease;
-    }
-    
-    .chat-input input:focus {
-        background-color: #555555;
-        box-shadow: 
-            inset 0 1px 3px rgba(0, 0, 0, 0.3),
-            0 0 0 2px rgba(30, 136, 229, 0.3);
-    }
-    
-    .chat-input button {
-        background-color: #1e88e5;
-        color: white;
-        border: none;
-        border-radius: 25px;
-        padding: 0 20px;
-        margin-left: 10px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: 
-            0 2px 5px rgba(0, 0, 0, 0.2),
-            0 3px 8px rgba(30, 136, 229, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .chat-input button:hover {
-        background-color: #1976d2;
-        transform: translateY(-2px);
-        box-shadow: 
-            0 4px 8px rgba(0, 0, 0, 0.3),
-            0 5px 12px rgba(30, 136, 229, 0.4);
-    }
-    
-    .chat-input button:active {
-        transform: translateY(0);
-        box-shadow: 
-            0 2px 3px rgba(0, 0, 0, 0.2),
-            0 3px 6px rgba(30, 136, 229, 0.3);
-    }
-    
-    .chat-input button::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 5px;
-        height: 5px;
-        background: rgba(255, 255, 255, 0.5);
-        opacity: 0;
-        border-radius: 100%;
-        transform: scale(1, 1) translate(-50%, -50%);
-        transform-origin: 50% 50%;
-    }
-    
-    .chat-input button:focus:not(:active)::after {
-        animation: ripple 0.6s ease-out;
-    }
-    
-    @keyframes ripple {
-        0% {
-            transform: scale(0, 0);
-            opacity: 0.5;
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
         }
-        100% {
-            transform: scale(20, 20);
-            opacity: 0;
+
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
         }
-    }
-    
-    .typing-indicator {
-        color: #aaaaaa;
-        font-style: italic;
-        margin: 5px 20px;
-        display: none;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: #3d3d3d;
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: #1e88e5;
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: #1976d2;
-    }
-    /* Modern Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500&display=swap');
 
-:root {
-  --primary: #4361ee;
-  --primary-light: #4895ef;
-  --dark: #0e0e10;
-  --gray: #1a1a1d;
-  --light: #f8f9fa;
-  --accent: #f72585;
-}
+        .modern-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 14px 8px 10px;
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--light);
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
 
-/* Modern Chat Container */
-.modern-chat {
-  width: 100%;
-  max-width: 420px;
-  height: 80vh;
-  max-height: 700px;
-  background: var(--dark);
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 
-    0 10px 25px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
-  overflow: hidden;
-  font-family: 'Inter', sans-serif;
-}
+        .modern-badge:hover {
+            background: rgba(60, 60, 60, 0.8);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
 
-/* Header */
-.chat-header {
-  padding: 18px 20px;
-  background: var(--gray);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
+        .ig-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--primary-light);
+        }
 
-.logo-pulse {
-  width: 12px;
-  height: 12px;
-  background: var(--accent);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
 
-@keyframes pulse {
-  0% { opacity: 0.6; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.1); }
-  100% { opacity: 0.6; transform: scale(0.9); }
-}
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-.chat-header h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--light);
-  margin: 0;
-  letter-spacing: -0.5px;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  background: #4ade80;
-  border-radius: 50%;
-  margin-left: auto;
-}
-
-/* Messages */
-.chat-messages {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background: linear-gradient(135deg, #0e0e10 0%, #1a1a1d 100%);
-}
-
-.message {
-  margin-bottom: 16px;
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.bubble {
-  max-width: 75%;
-  padding: 12px 16px;
-  border-radius: 18px;
-  line-height: 1.4;
-  font-size: 0.95rem;
-  position: relative;
-}
-
-.bot .bubble {
-  background: var(--gray);
-  color: var(--light);
-  border-bottom-left-radius: 4px;
-}
-
-.user .bubble {
-  background: var(--primary);
-  color: white;
-  border-bottom-right-radius: 4px;
-  margin-left: auto;
-}
-
-/* Typing Indicator */
-.typing-indicator {
-  padding: 0 20px 10px;
-  display: none;
-}
-
-.dot-flashing {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--primary-light);
-  animation: dotFlashing 1s infinite linear alternate;
-  animation-delay: 0.3s;
-}
-
-.dot-flashing::before, 
-.dot-flashing::after {
-  content: '';
-  display: inline-block;
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--primary-light);
-}
-
-.dot-flashing::before {
-  left: -12px;
-  animation: dotFlashing 1s infinite linear alternate;
-  animation-delay: 0s;
-}
-
-.dot-flashing::after {
-  left: 12px;
-  animation: dotFlashing 1s infinite linear alternate;
-  animation-delay: 0.6s;
-}
-
-@keyframes dotFlashing {
-  0% { opacity: 0.3; transform: scale(0.8); }
-  50%, 100% { opacity: 1; transform: scale(1); }
-}
-
-/* Input Area */
-.input-area {
-  padding: 15px;
-  background: var(--gray);
-  display: flex;
-  gap: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.input-area input {
-  flex: 1;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-radius: 12px;
-  color: var(--light);
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-}
-
-.input-area input:focus {
-  outline: none;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 2px var(--primary-light);
-}
-
-.input-area button {
-  width: 48px;
-  height: 48px;
-  background: var(--primary);
-  border: none;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.input-area button:hover {
-  background: var(--primary-light);
-  transform: translateY(-2px);
-}
-
-.input-area button:active {
-  transform: translateY(0);
-}
-
-/* Modern Badge */
-.modern-badge {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 8px 14px;
-  background: rgba(30, 30, 30, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--light);
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1000;
-}
-
-.modern-badge:hover {
-  background: rgba(60, 60, 60, 0.8);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.ig-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--primary-light);
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 3px;
-}
-</style>
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+    </style>
 </head>
 <body>
-<div class="modern-chat">
-  <div class="chat-header">
-    <div class="logo-pulse"></div>
-    <h1>Mr.Error</h1>
-    <div class="status-dot"></div>
-  </div>
-  
-  <div class="chat-messages" id="chat-messages">
-    <div class="message bot">
-      <div class="bubble">Hello! I'm Mr.Error. How can I help you today?</div>
+    <div class="modern-chat">
+        <div class="chat-header">
+            <div class="logo-pulse"></div>
+            <h1>Mr.Error</h1>
+            <div class="status-dot"></div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+        
+        <div class="typing-indicator" id="typing">
+            <div class="dot-flashing"></div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+            <button id="send-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 2L11 13" stroke="currentColor" stroke-width="2"/>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
+        </div>
     </div>
-  </div>
-  
-  <div class="typing-indicator" id="typing">
-    <div class="dot-flashing"></div>
-  </div>
-  
-  <div class="input-area">
-    <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
-    <button id="send-btn">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M22 2L11 13" stroke="currentColor" stroke-width="2"/>
-        <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2"/>
-      </svg>
-    </button>
-  </div>
-</div>
 
-<!-- Modern Credit Badge -->
-<a href="https://instagram.com/ahmedmehmood" target="_blank" class="modern-badge">
-  <span class="ig-icon">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-      <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor"/>
-      <path d="M17 3H7C4.79086 3 3 4.79086 3 7V17C3 19.2091 4.79086 21 7 21H17C19.2091 21 21 19.2091 21 17V7C21 4.79086 19.2091 3 17 3Z" stroke="currentColor" stroke-width="2"/>
-      <path d="M16.5 7.5V7.501" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-  </span>
-  <span>by Ahmed Mehmood</span>
-</a>
+    <a href="https://instagram.com/ahmedmehmood" target="_blank" class="modern-badge">
+        <span class="ig-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor"/>
+                <path d="M17 3H7C4.79086 3 3 4.79086 3 7V17C3 19.2091 4.79086 21 7 21H17C19.2091 21 21 19.2091 21 17V7C21 4.79086 19.2091 3 17 3Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M16.5 7.5V7.501" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <span>by Ahmed Mehmood</span>
+    </a>
 
     <script src="script.js"></script>
-<!-- Cyberpunk Instagram Badge -->
-<a href="https://instagram.com/ahmedmehmood" target="_blank" class="cyber-badge">
-  <span class="ig-logo"></span>
-  <span class="cyber-text">Made_By_Ahmed_Mehmood</span>
-</a>
-</a>
-</a>
-</a>
 </body>
 </html>
