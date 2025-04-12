@@ -153,7 +153,10 @@ sendButton.addEventListener('click', function(e) {
     // Handle the message sending
     handleUserMessage();
 });
-
+// Instagram redirect for credit badge
+document.querySelector('.credit-badge').addEventListener('click', function() {
+  window.open('https://instagram.com/ahmedmehmood', '_blank');
+});
 // Event listeners
 sendButton.addEventListener('click', handleUserMessage);
 userInput.addEventListener('keypress', (e) => {
