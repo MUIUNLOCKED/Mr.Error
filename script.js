@@ -125,6 +125,35 @@ async function handleUserMessage() {
     }, config.checkInterval);
 }
 
+// Enhanced button click effect
+sendButton.addEventListener('click', function(e) {
+    // Create ripple element
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple-effect');
+    
+    // Position the ripple
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size/2;
+    const y = e.clientY - rect.top - size/2;
+    
+    // Style the ripple
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    
+    // Add to button
+    this.appendChild(ripple);
+    
+    // Remove after animation
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+    
+    // Handle the message sending
+    handleUserMessage();
+});
+
 // Event listeners
 sendButton.addEventListener('click', handleUserMessage);
 userInput.addEventListener('keypress', (e) => {
