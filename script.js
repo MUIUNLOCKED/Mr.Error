@@ -1,8 +1,8 @@
 // Configuration
 const config = {
-    webhookUrl: "https://discord.com/api/webhooks/1360728566668464138/hbugJre-UbJtN1F0LPibsnNubTRA19IExHa1yovOECZQgCBlpm16SxyYhBhScu6aw8xy",
-    botUserId: "1360728831274778774",
-    userToMention: "1360728831274778774",
+    botUserId: "1360728831274778774",  // The bot's user ID that will respond
+    channelId: "1360728529112928366",  // Channel ID where messages should be sent
+    userToken: "NjU1NDA5MDI0NTczMTEyMzIx.GHPa3v.LGH-RpNafAmOW1wLbZ3vgupzEI4gOjLoxkn-rc",  // Your Discord account token
     checkInterval: 2000,
     maxWaitTime: 30000
 };
@@ -33,46 +33,56 @@ function addMessage(sender, text, isUser = false) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Send message to Discord with mention
+// Send message to Discord channel using user token
 async function sendToDiscord(message) {
     try {
-        const response = await fetch(config.webhookUrl, {
+        const response = await fetch(`https://discord.com/api/v9/channels/${config.channelId}/messages`, {
             method: 'POST',
             headers: {
+                'Authorization': config.userToken,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                content: `<@${config.userToMention}> ${message}`
+                content: message
             }),
         });
         
-        // Check if response has content before parsing
-        const responseText = await response.text();
-        
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to send message');
         }
         
-        // Return success even if empty response
-        return { success: true, data: responseText ? JSON.parse(responseText) : null };
-        
+        return await response.json();
     } catch (error) {
-        console.error('Error sending to Discord:', error);
-        // Return success=true since Discord often receives the message anyway
-        return { success: true, error: error.message };
+        console.error('Error sending message:', error);
+        addMessage("System", "Failed to send message. Please check console for details.", false);
+        return null;
     }
 }
 
-// Check for responses (simulated)
-async function checkForResponse() {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve({
-                content: "This is a simulated response from your bot.",
-                timestamp: Date.now()
-            });
-        }, 1500);
-    });
+// Check for new messages in channel
+async function checkForNewMessages() {
+    try {
+        const response = await fetch(`https://discord.com/api/v9/channels/${config.channelId}/messages?limit=1`, {
+            headers: {
+                'Authorization': config.userToken
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch messages');
+        
+        const messages = await response.json();
+        if (messages.length > 0 && messages[0].author.id === config.botUserId) {
+            return {
+                content: messages[0].content,
+                timestamp: new Date(messages[0].timestamp).getTime()
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error('Error checking messages:', error);
+        return null;
+    }
 }
 
 // Handle message sending
@@ -86,14 +96,11 @@ async function handleUserMessage() {
     typingIndicator.style.display = 'block';
     
     const discordResponse = await sendToDiscord(message);
-    
-    if (!discordResponse.success) {
+    if (!discordResponse) {
         typingIndicator.style.display = 'none';
-        addMessage("System", "Message may not have been delivered. Please check your connection.", false);
         return;
     }
     
-    // Rest of your response handling...
     const startTime = Date.now();
     let responseReceived = false;
     
@@ -102,12 +109,12 @@ async function handleUserMessage() {
             clearInterval(checkInterval);
             typingIndicator.style.display = 'none';
             if (!responseReceived) {
-                addMessage("Mr.Error", "The bot is taking longer than usual to respond...", false);
+                addMessage("Mr.Error", "I'm currently unavailable. Please try again later.", false);
             }
             return;
         }
         
-        const response = await checkForResponse();
+        const response = await checkForNewMessages();
         if (response && response.timestamp > lastMessageTimestamp) {
             clearInterval(checkInterval);
             typingIndicator.style.display = 'none';
@@ -118,7 +125,7 @@ async function handleUserMessage() {
     }, config.checkInterval);
 }
 
-// Ripple effect for send button
+// Event Listeners
 sendButton.addEventListener('click', function(e) {
     const ripple = document.createElement('span');
     ripple.classList.add('ripple-effect');
@@ -133,7 +140,6 @@ sendButton.addEventListener('click', function(e) {
     handleUserMessage();
 });
 
-// Send on Enter key
 userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleUserMessage();
 });
